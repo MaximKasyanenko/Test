@@ -46,9 +46,7 @@ extension DownloadTrack: URLSessionDelegate, URLSessionDownloadDelegate {
     @MainActor func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         guard let url = downloadTask.originalRequest?.url else { return }
         let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-       
         let destinationURL = documentsPath.appendingPathComponent(url.lastPathComponent)
-        
         try? FileManager.default.removeItem(at: destinationURL)
         do {
             try FileManager.default.copyItem(at: location, to: destinationURL)
@@ -59,7 +57,6 @@ extension DownloadTrack: URLSessionDelegate, URLSessionDownloadDelegate {
         DispatchQueue.main.async {
             self.complition?()
         }
-         
         isDownload = true
     }
     

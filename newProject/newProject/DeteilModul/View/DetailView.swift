@@ -16,11 +16,9 @@ protocol DetailViewProtocol: AnyObject {
 
 class DetailView: UIViewController {
     //MARK: -Propertis
-    var isHiden = true {
-        didSet {
-          isHidden()
-        }
-    }
+    private let downloadProgres = UIProgressView()
+    private let downloadLable = UILabel()
+    private let downloadBatton = LoadButton()
     private var detailImage = MyimageView(frame: .zero)
     private let nameLabel = NameLabel()
     private let trackNameLabel = TrackNameLabel()
@@ -35,13 +33,11 @@ class DetailView: UIViewController {
         axis: .vertical,
         spacing: 20
     )
-    private let downloadProgres = UIProgressView()
-    private let downloadLable = UILabel()
-    private lazy var downloadBatton: LoadButton = {
-        let buttom = LoadButton()
-        buttom.addTarget(self, action: #selector(downloadTap), for: .touchUpInside)
-        return buttom
-    }()
+    var isHiden = true {
+        didSet {
+          isHidden()
+        }
+    }
     var presentor: DetailPresenterProtocol!
     
     override func viewDidLoad() {

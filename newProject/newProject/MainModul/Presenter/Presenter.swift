@@ -45,14 +45,9 @@ final class MainPresenter: PresenterProtocol {
     
     func cellData(indexPath: IndexPath, cell: MainTableViewCell) {
         let track = tracks?[indexPath.row]
-        getImage(url: track?.artworkUrl60 ?? "") {[weak self]data in
-            let image = self?.setImage(data: data)
+        getImage(url: track?.artworkUrl60 ?? "") { data in
+            let image = UIImage(data: data)
             cell.configur(track: track?.trackName, image: image)
         }
-    }
-    
-    func setImage(data: Data) -> UIImage? {
-        let image = UIImage(data: data)
-        return image
     }
 }
