@@ -65,9 +65,7 @@ extension MainViewController: MainViewProtocol {
 //MARK: SearchBarDelegate
 extension MainViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        let search = searchText
-        let text = search.replacingOccurrences(of: " ", with: "+")
-        presenter?.getTrack(serch: text)
+        presenter?.getTrack(serch: searchText)
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {

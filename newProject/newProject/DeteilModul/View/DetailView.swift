@@ -11,18 +11,20 @@ protocol DetailViewProtocol: AnyObject {
     var isHiden: Bool { get set }
     func setController(track: Track?, image: UIImage?)
     func setDownloadView(progress: Float, downloadSize: String)
-    func compliteLoading()
+    func completeLoading()
+    func endDownload()
 }
 
 class DetailView: UIViewController {
-    //MARK: -Propertis
-    private let downloadProgres = UIProgressView()
-    private let downloadLable = UILabel()
-    private let downloadBatton = LoadButton()
+    //MARK: - Propertys
+    private let downloadProgress = UIProgressView()
+    private let downloadLabel = UILabel()
+    private let downloadButton = LoadButton()
     private var detailImage = MyimageView(frame: .zero)
     private let nameLabel = NameLabel()
     private let trackNameLabel = TrackNameLabel()
     private let albumNameLabel = AlbumNameLabel()
+    private let lottiView = LottiImagesView()
     private lazy var stack = UIStackView(
         arrangedSubViews: [
             detailImage,
@@ -35,10 +37,10 @@ class DetailView: UIViewController {
     )
     var isHiden = true {
         didSet {
-          isHidden()
+            isHidden()
         }
     }
-    var presentor: DetailPresenterProtocol!
+    var presenter: DetailPresenterProtocol!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,17 +49,17 @@ class DetailView: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super .viewDidLayoutSubviews()
-        setConsreints()
+        setConstraints()
     }
     //MARK: - @objc
     @objc func downloadTap() {
-        presentor.downLoadTrack()
+        presenter.downLoadTrack()
     }
 }
 //MARK: - DetailViewProtocol
 extension DetailView: DetailViewProtocol {
-    func compliteLoading() {
-        downloadBatton.isDownload = isHiden
+    func completeLoading() {
+        downloadButton.isDownload = isHiden
     }
     
     func setController(track: Track?, image: UIImage?) {
@@ -65,33 +67,38 @@ extension DetailView: DetailViewProtocol {
         trackNameLabel.text = track?.trackName
         albumNameLabel.text = track?.collectionCensoredName
         detailImage.image = image
-        }
+    }
     
     func setDownloadView(progress: Float, downloadSize: String) {
-        downloadLable.text = downloadSize
-        downloadProgres.progress = progress
+        downloadLabel.text = downloadSize
+        downloadProgress.progress = progress
+        lottiView.progress(to: CGFloat(progress))
+    }
+    func endDownload() {
+        lottiView.endDownload()
     }
 }
 //MARK: - Private func
 extension DetailView {
     private func isHidden() {
-        downloadLable.isHidden = isHiden
-        downloadProgres.isHidden = isHiden
+        downloadLabel.isHidden = isHiden
+        downloadProgress.isHidden = isHiden
     }
-
+    
     private func setViews() {
         view.backgroundColor = .white
         stack.alignment = .center
         view.addSubview(stack)
-        view.addSubview(downloadBatton)
-        view.addSubview(downloadProgres)
-        view.addSubview(downloadLable)
-        downloadProgres.translatesAutoresizingMaskIntoConstraints = false
-        downloadLable.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(downloadButton)
+        view.addSubview(downloadProgress)
+        view.addSubview(downloadLabel)
+        view.addSubview(lottiView)
+        downloadProgress.translatesAutoresizingMaskIntoConstraints = false
+        downloadLabel.translatesAutoresizingMaskIntoConstraints = false
         isHidden()
     }
     
-    private func setConsreints() {
+    private func setConstraints() {
         let safeArea = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
             detailImage.heightAnchor.constraint(equalToConstant: 130),
@@ -100,17 +107,22 @@ extension DetailView {
             stack.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 50),
             stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
             stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
-        
-            downloadLable.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            downloadLable.bottomAnchor.constraint(equalTo: downloadProgres.topAnchor, constant: -10),
             
-            downloadProgres.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            downloadProgres.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            downloadProgres.bottomAnchor.constraint(equalTo: downloadBatton.topAnchor, constant: -30),
+            downloadLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            downloadLabel.bottomAnchor.constraint(equalTo: downloadProgress.topAnchor, constant: -10),
             
-            downloadBatton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20),
-            downloadBatton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
-            downloadBatton.widthAnchor.constraint(equalToConstant: 100)
+            lottiView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            lottiView.heightAnchor.constraint(equalToConstant: 250),
+            lottiView.widthAnchor.constraint(equalToConstant: 250),
+            lottiView.bottomAnchor.constraint(equalTo: downloadProgress.topAnchor, constant: -20),
+            
+            downloadProgress.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            downloadProgress.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            downloadProgress.bottomAnchor.constraint(equalTo: downloadButton.topAnchor, constant: -30),
+            
+            downloadButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20),
+            downloadButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            downloadButton.widthAnchor.constraint(equalToConstant: 100)
         ])
     }
 }

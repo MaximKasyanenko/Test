@@ -17,7 +17,9 @@ class SceneBuilder: SceneBuilderProtocol {
         
     func createMainScene(router: RouterProtocol) -> UIViewController {
         let view = MainViewController()
-        let presenter = MainPresenter(view: view, router: router)
+        let network = NetworkService()
+        let trackServise = TrackService(network: network)
+        let presenter = MainPresenter(view: view, router: router, trackServise: trackServise)
         view.presenter = presenter
         return view
     }
@@ -26,7 +28,7 @@ class SceneBuilder: SceneBuilderProtocol {
         let view = DetailView()
         let download = DownloadTrack(urlTrack: track.previewUrl)
         let presenter = DetailsPresenter(view: view, track: track, router: router, download: download, image: image)
-        view.presentor = presenter
+        view.presenter = presenter
         download.delegete = presenter
         return view
     }

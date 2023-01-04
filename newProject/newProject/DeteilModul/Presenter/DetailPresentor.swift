@@ -38,19 +38,24 @@ private extension DetailsPresenter {
         guard let controller = view as? UIViewController else { return }
         if let url = downloadTrack?.localUrlTrack {
             router?.showPlayer(localUrl: url, view: controller)
-            } else {
+        } else {
             view?.isHiden = false
             downloadTrack?.download()
             downloadTrack?.complition = { [ weak self ] in
                 self?.router?.showPlayer(localUrl: self?.downloadTrack?.localUrlTrack, view: controller)
-                self?.view?.compliteLoading()
+                self?.view?.completeLoading()
                 self?.view?.isHiden = true
+                
             }
         }
     }
 }
 //MARK: - DownloadTrackDelegate
 extension DetailsPresenter: DownloadTrackDelegate {
+    func endDownLoad() {
+        view?.endDownload()
+    }
+    
     func progressTransfer(progress: Float, downloadSize: String) {
         view?.setDownloadView(progress: progress, downloadSize: downloadSize)
     }

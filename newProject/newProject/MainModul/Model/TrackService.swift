@@ -7,15 +7,28 @@
 
 import Foundation
 
+protocol TrackServiceProtocol {
+    var network: NetworkServiceProtocol { get set }
+    var trackUpdateHandler: VoidHandler? { get set }
+    var tracks: [Track]? { get set }
+    func getTrack(serch: String)
+    func getImage(url: String, complition: @MainActor @escaping (Data) -> ())
+    func setTrack(track: Track, completion: @escaping (Track, Data) -> Void)
+    init(network: NetworkServiceProtocol)
+}
 typealias VoidHandler = () -> Void
 
-final class TrackService {
-    private let network: NetworkServiceProtocol = NetworkService()
+final class TrackService: TrackServiceProtocol {
+    var network: NetworkServiceProtocol
     var trackUpdateHandler: VoidHandler?
-    private(set) var tracks: [Track]? {
+    var tracks: [Track]? {
         didSet {
             trackUpdateHandler?()
         }
+    }
+    
+    init(network: NetworkServiceProtocol) {
+        self.network = network
     }
     
     @MainActor func getTrack(serch: String)  {

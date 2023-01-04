@@ -10,7 +10,7 @@ import UIKit
 protocol PresenterProtocol: AnyObject {
     var router: RouterProtocol? { get }
     var tracks: [Track]? { get }
-    init(view: MainViewProtocol, router: RouterProtocol)
+    init(view: MainViewProtocol, router: RouterProtocol, trackServise: TrackServiceProtocol)
     func getTrack(serch: String)
     func getImage(url: String, complition: @MainActor @escaping (Data) -> ())
     func ingectionTrack(track: Track, image: UIImage?)
@@ -21,18 +21,20 @@ final class MainPresenter: PresenterProtocol {
     var tracks: [Track]? { trackService.tracks }
     var router: RouterProtocol?
     private weak var view: MainViewProtocol?
-    private let trackService = TrackService()
-
-    required init(view: MainViewProtocol, router: RouterProtocol) {
+    private var trackService: TrackServiceProtocol
+    
+    required init(view: MainViewProtocol, router: RouterProtocol, trackServise: TrackServiceProtocol) {
         self.view = view
         self.router = router
+        self.trackService = trackServise
         trackService.trackUpdateHandler = { [weak self] in
             self?.view?.reloadTableView()
         }
     }
     //MARK: - Func
-    @MainActor func getTrack(serch: String)  {
-        trackService.getTrack(serch: serch)
+     func getTrack(serch: String)  {
+         let text = validate(text: serch)
+        trackService.getTrack(serch: text)
     }
     
     func getImage(url: String, complition: @MainActor @escaping (Data) -> ()) {
@@ -49,5 +51,10 @@ final class MainPresenter: PresenterProtocol {
             let image = UIImage(data: data)
             cell.configur(track: track?.trackName, image: image)
         }
+    }
+    
+    private func validate(text: String) -> String {
+        let text = text.replacingOccurrences(of: " ", with: "+")
+        return text
     }
 }

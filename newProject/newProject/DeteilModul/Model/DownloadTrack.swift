@@ -18,6 +18,7 @@ protocol DownloadProtocol: NSObject {
 //MARK: - DownloadTrackDelegate
 protocol DownloadTrackDelegate: AnyObject {
     func progressTransfer(progress: Float, downloadSize: String)
+    func endDownLoad()
 }
 //MARK: - DownloadTrack
 class DownloadTrack: NSObject, DownloadProtocol {
@@ -56,8 +57,10 @@ extension DownloadTrack: URLSessionDelegate, URLSessionDownloadDelegate {
         }
         DispatchQueue.main.async {
             self.complition?()
+            self.delegete?.endDownLoad()
         }
         isDownload = true
+       
     }
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {

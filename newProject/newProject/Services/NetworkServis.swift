@@ -28,7 +28,7 @@ class NetworkService: NetworkServiceProtocol {
     }
     // MARK: Loading search result
     func getSearch(qwery: String) async throws -> [Track]? {
-        let url = URL(string:url + qwery + APIs.count25.rawValue)
+        let url = URL(string: url + qwery + APIs.count25.rawValue)
         guard let url = url else { throw URLerror.quveriURLerror  }
         let (data, response) = try await URLSession.shared.data(from: url)
         guard let resp = response as? HTTPURLResponse, resp.statusCode == 200 else { throw URLerror.responseError }
