@@ -1,5 +1,6 @@
 Apps to find your favorite tracks!
-Stack of technologies as a twister:
+
+Technology stack that was used:
 - delegate
 - MVP
 - async/await
